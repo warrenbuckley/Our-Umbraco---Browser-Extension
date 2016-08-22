@@ -149,13 +149,16 @@ function parseProjectsResults(apiResponse){
         
         var project = element.Fields;
 
-        console.log('Project', project);
+
+        //Downloads converted from a string to real number
+        //So we can then apply locale to get comma's in numbers for thousands
+        var downloads = parseInt(project.downloads);
 
         //Description
         //TODO: Create a TypeScript interface based on the JSON we get back from API
         var description =   "<match>" + project.nodeName + "</match> " +
                             "<dim>Karma: " + project.karma + "</dim> " +
-                            "<dim>Downloads: " + project.downloads + "</dim>";
+                            "<dim>Downloads: " + downloads.toLocaleString() + "</dim>";
 
         if(project.worksOnUaaS.toLowerCase() === "true"){
             description = description + " <url><match>Works on Umbraco as a Service</match></url>";
@@ -190,10 +193,6 @@ function parseDocResults(apiResponse){
     });
 
     return suggestResults;
-}
-
-interface Project {
-
 }
 
 type ApiRequest = "Project" | "Docs" | "Forum";
