@@ -1,0 +1,20 @@
+{
+  "name": "our-umbraco-extension",
+  "version": "1.0.0",
+  "description": "A Browser extension that extends Omnibox with results from Our.Umbraco",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Umbraco",
+    "Chrome"
+  ],
+  "author": "Warren Buckley",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.1.0",
+    "gulp-typescript": "^2.13.6"
+  }
+}
