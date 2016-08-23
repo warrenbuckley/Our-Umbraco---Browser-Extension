@@ -66,6 +66,8 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
                 break;
 
             default:
+                resetSuggestion();
+
                 //Don't match any of these words just search the API for ALL types
                 break;
         }
@@ -91,7 +93,6 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
     }
     
 });
-
 
 
 function fetchResults(term:string, apiType: ApiRequest, callbackFunction) : void {
@@ -243,6 +244,13 @@ function isValidUrl(stringToCheck:string):boolean {
     a.remove();
 
     return result;
+}
+
+
+function resetSuggestion(){
+    chrome.omnibox.setDefaultSuggestion({
+        description: "<match>Projects</match> <dim>keywords</dim> or <match>Forums</match> <dim>keywords</dim> or <match>Docs</match> <dim>keywords</dim>"
+    });
 }
 
 type ApiRequest = "Project" | "Docs" | "Forum";
