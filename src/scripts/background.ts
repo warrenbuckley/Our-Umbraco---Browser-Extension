@@ -76,11 +76,20 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 // This event is fired with the user accepts the input in the omnibox.
 chrome.omnibox.onInputEntered.addListener(function(text) {
 
-    //Think we simply just need to use the text which will be the URL to the item
-    //To open it in the current tab
-
     console.log('inputEntered: ' + text);
-    alert('You just typed "' + text + '"');
+
+    //Check that the text is a URL
+    //If its not then either the API did not return a URL for an autocomplete/suggest item
+    //Or that the user did not choose a suggest item and simply hit enter (which will be something like 'project forms')
+
+    if(isValidUrl(text)){
+        //Think we simply just need to use the text which will be the URL to the item
+        //To open it in the current tab
+        updateTabUrl(text);
+    } else {
+        return null;
+    }
+    
 });
 
 
@@ -184,15 +193,56 @@ function parseDocResults(apiResponse){
         
         var doc = element.Fields;
 
+        //Docs path (searchAblePath)
+        //H wwwroot Documentation Add-ons UmbracoForms Installation installation.md
+        var path:string = doc.searchAblePath;
+        path = path.replace('H wwwroot ', '');
+
         //Description
         //TODO: Create a TypeScript interface based on the JSON we get back from API
-        var description =   "<match>" + doc.nodeName + "</match>";
+        var description =   "<match>" + doc.nodeName + "</match> " + 
+                            "<url>" + path + "</url>";
+
 
         //Push the result into the collection
         suggestResults.push({ content: baseUrl + doc.url, description: description });
     });
 
     return suggestResults;
+}
+
+function updateTabUrl(url:string){
+
+    //Query/get the current active tab in the active window
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, function(tabs) {
+
+        //Should only be one returned
+        //As its the current tab the omnibox text is being typed in
+        //So update that tab with the URL we pass in
+        chrome.tabs.update(tabs[0].id, {
+            url: url
+        });
+    });
+}
+
+
+function isValidUrl(stringToCheck:string):boolean {
+    var a:HTMLAnchorElement  = document.createElement('a');
+    a.href = stringToCheck;
+
+    //Do the check
+    var result =  (a.host && a.host != window.location.host);
+    
+    //Log it
+    console.log('anchor', a.host);
+
+    //Remove the item we created
+    a.remove();
+
+    return result;
 }
 
 type ApiRequest = "Project" | "Docs" | "Forum";
